@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">MultiShare</string>
-    <string name="title_activity_share">MultiShare</string>
+
+    <string name="receiver_ready">Ready to receive</string>
 
 </resources>

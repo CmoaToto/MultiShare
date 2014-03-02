@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="background_author">Romain Guy</string>
+    
+    <array name="background_images">
+        <item>@drawable/darkvslight</item>
+        <item>@drawable/tunneloflight</item>
+        <item>@drawable/pathtomyheart</item>
+        <item>@drawable/reunion</item>
+        <item>@drawable/lighttosand</item>
+        <item>@drawable/flyinginthelight</item>
+        <item>@drawable/brycecanyon</item>
+        <item>@drawable/rockawayriversunset</item>
+        <item>@drawable/hotsand</item>
+        
+    </array>
+    
+    <string-array name="background_images_names">
+        <item>Dark vs Light</item>
+        <item>Tunnel of Light</item>
+        <item>Path to my Heart</item>
+        <item>Reunion</item>
+        <item>Light to Sand</item>
+        <item>Flying in the Light</item>
+        <item>Bryce Canyon</item>
+        <item>Rock Away River Sunset</item>
+        <item>Hot Sand</item>
+        
+    </string-array>
+
+</resources>

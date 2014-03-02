@@ -1,4 +1,4 @@
-package fr.cmoatoto.multishare;
+package fr.cmoatoto.multishare.sender;
 
 import java.util.Set;
 
@@ -57,6 +57,7 @@ public class ShareActivity extends Activity {
 		} else {
 			// TODO Handle other intents, such as being started from the home screen
 		}
+		finish();
 	}
 
 }

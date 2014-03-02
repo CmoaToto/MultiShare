@@ -1,6 +1,8 @@
-package fr.cmoatoto.multishare;
+package fr.cmoatoto.multishare.sender;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.app.Service;
@@ -22,7 +24,7 @@ public class HttpService extends Service {
 	private static final int PORT = 8765;
 
 	private MulticastLock mCastLock;
-	// private static NanoHTTPD server;
+	private static NanoHTTPD server;
 	private String mFormatedIpAddress;
 
 	@Override
@@ -49,8 +51,8 @@ public class HttpService extends Service {
 				Log.d(TAG, "Text loaded : " + txt);
 
 				// launch other device discovering
-				DiscoveryTask task = new DiscoveryTask(this);
-				task.execute(DiscoveryTask.SEND_TEXT, txt, type);
+				BroadcastTask task = new BroadcastTask();
+				task.execute(BroadcastTask.SEND_TEXT, txt, type);
 			}
 
 		} else if (intent.hasExtra(Intent.EXTRA_STREAM)) {
@@ -59,16 +61,15 @@ public class HttpService extends Service {
 			File file = AndroidUtils.getFile(this, streamUri, false);
 			Log.d(TAG, "Stream loaded : " + file.getPath());
 
-//			try {
-				// TODO : Fix this
-//				if (server != null) {
-//					server.stop();
-//				}
-//				server = new NanoHTTPD(PORT, null, this);
-//				server.setFormatedIpAddress(mFormatedIpAddress);
+			try {
+				if (server != null) {
+					server.stop();
+				}
+				server = new NanoHTTPD(PORT, null, this);
+				server.setFormatedIpAddress(mFormatedIpAddress);
 
-				URL ext = null;//new URL(new URL(server.getLocalhost()), server.addFile(file));
-				Log.d(TAG, "External URL : ");// + ext.toExternalForm());
+				URL ext = new URL(new URL(server.getLocalhost()), server.addFile(Uri.fromFile(file)));
+				Log.d(TAG, "External URL : " + ext.toExternalForm());
 
 				String mimetype = null;
 				String extension = "*";
@@ -84,14 +85,14 @@ public class HttpService extends Service {
 					}
 				}
 
-				// launch STB discover
-				DiscoveryTask task = new DiscoveryTask(this);
-				task.execute(DiscoveryTask.SEND_OBJECT, null/*ext.toExternalForm()*/, mimetype != null ? mimetype : type, extension != null ? extension : null);
-//			} catch (MalformedURLException e) {
-//				Log.d(TAG, Log.getStackTraceString(e));
-//			} catch (IOException e) {
-//				Log.d(TAG, Log.getStackTraceString(e));
-//			}
+				// launch device discover
+				BroadcastTask task = new BroadcastTask();
+				task.execute(BroadcastTask.SEND_OBJECT, ext.toExternalForm(), mimetype != null ? mimetype : type, extension != null ? extension : null);
+			} catch (MalformedURLException e) {
+				Log.d(TAG, Log.getStackTraceString(e));
+			} catch (IOException e) {
+				Log.d(TAG, Log.getStackTraceString(e));
+			}
 
 		}
 
@@ -113,8 +114,8 @@ public class HttpService extends Service {
 
 	public void onDestroy() {
 
-//		if (server != null)
-//			server.stop();
+		if (server != null)
+			server.stop();
 		if (mCastLock != null)
 			mCastLock.release();
 
