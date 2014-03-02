@@ -17,6 +17,7 @@ public class BroadcastTask extends AsyncTask<String, Object, Object> {
 
 	@Override
 	protected Object doInBackground(String... args) {
+		Log.d(TAG, "BroadcastTask called");
 
 		String valueToPost = null;
 		String mimeType = null;

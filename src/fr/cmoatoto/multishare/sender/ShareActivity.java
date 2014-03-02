@@ -33,9 +33,9 @@ public class ShareActivity extends Activity {
 		Log.d(TAG, "Load type : " + type);
 		Log.d(TAG, "Load action : " + action);
 
-		Intent sendServiceIntent = new Intent(this, HttpService.class);
+		Intent sendServiceIntent = new Intent(this, HttpServiceSender.class);
 		if (Intent.ACTION_SEND.equals(action) && type != null) {
-			sendServiceIntent.putExtra(HttpService.TYPE_KEY, type);
+			sendServiceIntent.putExtra(HttpServiceSender.TYPE_KEY, type);
 
 			Log.d(TAG, "Load extras : ");
 			Bundle extras = intent.getExtras();

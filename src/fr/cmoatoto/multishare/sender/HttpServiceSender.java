@@ -15,16 +15,16 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import fr.cmoatoto.multishare.utils.AndroidUtils;
 
-public class HttpService extends Service {
+public class HttpServiceSender extends Service {
 
-	private static String TAG = HttpService.class.getName();
+	private static String TAG = HttpServiceSender.class.getName();
 
 	public static String TYPE_KEY = TAG + ".typeKey";
 
 	private static final int PORT = 8765;
 
 	private MulticastLock mCastLock;
-	private static NanoHTTPD server;
+	private static NanoHTTPDSender server;
 	private String mFormatedIpAddress;
 
 	@Override
@@ -65,7 +65,7 @@ public class HttpService extends Service {
 				if (server != null) {
 					server.stop();
 				}
-				server = new NanoHTTPD(PORT, null, this);
+				server = new NanoHTTPDSender(PORT, null, this);
 				server.setFormatedIpAddress(mFormatedIpAddress);
 
 				URL ext = new URL(new URL(server.getLocalhost()), server.addFile(Uri.fromFile(file)));

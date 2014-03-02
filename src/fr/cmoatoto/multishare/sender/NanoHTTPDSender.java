@@ -79,12 +79,12 @@ import android.util.Log;
  * 
  * See the end of the source file for distribution license (Modified BSD licence)
  */
-public class NanoHTTPD {
+public class NanoHTTPDSender {
 	// ==================================================
 	// API parts
 	// ==================================================
 
-	private static final String TAG = NanoHTTPD.class.getName();
+	private static final String TAG = NanoHTTPDSender.class.getName();
 
 	private String mFormatedIpAddress;
 
@@ -291,7 +291,7 @@ public class NanoHTTPD {
 	 * <p>
 	 * Throws an IOException if the socket is already in use
 	 */
-	public NanoHTTPD(int port, File wwwroot, Context context) throws IOException {
+	public NanoHTTPDSender(int port, File wwwroot, Context context) throws IOException {
 		this.mContext = context;
 		myTcpPort = port;
 		this.myRootDir = wwwroot;

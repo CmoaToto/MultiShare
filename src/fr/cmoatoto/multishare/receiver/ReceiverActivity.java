@@ -1,6 +1,7 @@
 package fr.cmoatoto.multishare.receiver;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
 import fr.cmoatoto.multishare.R;
+import fr.cmoatoto.multishare.sender.HttpServiceSender;
 
 public class ReceiverActivity extends Activity {
 
@@ -70,5 +72,7 @@ public class ReceiverActivity extends Activity {
 			}
 
 		});
+		
+		startService(new Intent(this, HttpServiceReceiver.class));
 	}
 }
