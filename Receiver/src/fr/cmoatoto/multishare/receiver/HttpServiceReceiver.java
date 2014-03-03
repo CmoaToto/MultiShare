@@ -20,7 +20,6 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
-import fr.cmoatoto.multishare.utils.AndroidUtils;
 
 public class HttpServiceReceiver extends Service {
 
@@ -29,7 +28,6 @@ public class HttpServiceReceiver extends Service {
 	private static String TAG = HttpServiceReceiver.class.getName();
 
 	private static NanoHTTPDReceiver server;
-	private String mFormatedIpAddress;
 
 	NsdManager mNsdManager;
 
@@ -37,24 +35,15 @@ public class HttpServiceReceiver extends Service {
 		return server;
 	}
 
-	public String getFormatedAddress() {
-		return mFormatedIpAddress;
-	}
-
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
 	public void onCreate() {
-
 		httpService = this;
 		Log.d(TAG, "My Service Created");
-		mFormatedIpAddress = "http://" + AndroidUtils.getIPAddress(true) + ":XX/";
-
-		Log.d("TAG", "start on " + mFormatedIpAddress);
 		try {
 			server = new NanoHTTPDReceiver( //
 					0, //

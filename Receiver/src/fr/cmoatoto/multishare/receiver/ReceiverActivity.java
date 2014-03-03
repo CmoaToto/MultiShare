@@ -11,8 +11,6 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher.ViewFactory;
-import fr.cmoatoto.multishare.R;
-import fr.cmoatoto.multishare.sender.HttpServiceSender;
 
 public class ReceiverActivity extends Activity {
 
