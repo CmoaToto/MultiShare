@@ -5,10 +5,10 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -31,7 +31,6 @@
                 <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="fr.cmoatoto.multishare.receiver.ReceiverActivity"
             android:label="@string/app_name"
@@ -46,7 +45,6 @@
         <service
             android:name="fr.cmoatoto.multishare.sender.HttpServiceSender"
             android:enabled="true" />
-
         <service
             android:name="fr.cmoatoto.multishare.receiver.HttpServiceReceiver"
             android:enabled="true" />

@@ -6,31 +6,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.http.conn.util.InetAddressUtils;
-import org.ray.upnp.ssdp.SSDPSocket;
-
-import fr.cmoatoto.multishare.sender.BroadcastTask;
-import fr.cmoatoto.multishare.sender.HttpServiceSender;
-import fr.cmoatoto.multishare.utils.AndroidUtils;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdManager.RegistrationListener;
+import android.net.nsd.NsdServiceInfo;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.WindowManager;
+import fr.cmoatoto.multishare.utils.AndroidUtils;
 
 public class HttpServiceReceiver extends Service {
 
@@ -38,10 +28,10 @@ public class HttpServiceReceiver extends Service {
 
 	private static String TAG = HttpServiceReceiver.class.getName();
 
-	private static final int PORT = 8765;
-
 	private static NanoHTTPDReceiver server;
 	private String mFormatedIpAddress;
+
+	NsdManager mNsdManager;
 
 	public static NanoHTTPDReceiver getHttpServer() {
 		return server;
@@ -61,23 +51,48 @@ public class HttpServiceReceiver extends Service {
 	public void onCreate() {
 
 		httpService = this;
-
 		Log.d(TAG, "My Service Created");
-
-		mFormatedIpAddress = "http://" + AndroidUtils.getIPAddress(true) + ":" + PORT + "/";
+		mFormatedIpAddress = "http://" + AndroidUtils.getIPAddress(true) + ":XX/";
 
 		Log.d("TAG", "start on " + mFormatedIpAddress);
-		
-		ReceiveTask task = new ReceiveTask(this);
-		task.execute();
+		try {
+			server = new NanoHTTPDReceiver( //
+					0, //
+					new File("/"), //
+					getApplicationContext() //
+			);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("TAG", "using port " + server.getLocalPort());
+		NsdServiceInfo nsi = new NsdServiceInfo();
+		nsi.setPort(server.getLocalPort());
+		nsi.setServiceName("MultiShare");
+		nsi.setServiceType("_http._tcp.");
+		mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
+		mNsdManager.registerService(nsi, NsdManager.PROTOCOL_DNS_SD, new RegistrationListener() {
 
-//		try {
-//			// SSDPSocket.init(this);
-//			server = new NanoHTTPDReceiver(PORT, null, this);
-//			server.setFormatedIpAddress(mFormatedIpAddress);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+			@Override
+			public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+				Log.e(TAG, "onUnregistrationFailed");
+			}
+
+			@Override
+			public void onServiceUnregistered(NsdServiceInfo serviceInfo) {
+				Log.d(TAG, "onServiceUnregistered");
+			}
+
+			@Override
+			public void onServiceRegistered(NsdServiceInfo serviceInfo) {
+				Log.d(TAG, "onServiceRegistered");
+			}
+
+			@Override
+			public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+				Log.e(TAG, "onRegistrationFailed");
+			}
+		});
 	}
 
 	@Override
@@ -122,8 +137,7 @@ public class HttpServiceReceiver extends Service {
 
 						@Override
 						public void onDownloadFinish() {
-							show(c, "file://" + Environment.getExternalStorageDirectory() + "/download/tmp" + (extension != null ? ("." + extension) : ""),
-									mime, null);
+							show(c, "file://" + Environment.getExternalStorageDirectory() + "/download/tmp" + (extension != null ? ("." + extension) : ""), mime, null);
 						}
 					});
 					downloadFile.start();
@@ -153,13 +167,13 @@ public class HttpServiceReceiver extends Service {
 						URL url = new URL(urlString);
 						URLConnection connection = url.openConnection();
 						connection.connect();
-						// this will be useful so that you can show a typical 0-100% progress bar
+						// this will be useful so that you can show a typical
+						// 0-100% progress bar
 						int fileLength = connection.getContentLength();
 
 						// download the file
 						InputStream input = new BufferedInputStream(url.openStream());
-						OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/tmp"
-								+ (extension != null ? ("." + extension) : ""));
+						OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory() + "/download/tmp" + (extension != null ? ("." + extension) : ""));
 
 						byte data[] = new byte[1024];
 						long total = 0;

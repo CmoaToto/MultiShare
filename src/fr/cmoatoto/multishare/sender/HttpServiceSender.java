@@ -8,8 +8,7 @@ import java.net.URL;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.MulticastLock;
+import android.net.nsd.NsdManager;
 import android.os.IBinder;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -21,11 +20,10 @@ public class HttpServiceSender extends Service {
 
 	public static String TYPE_KEY = TAG + ".typeKey";
 
-	private static final int PORT = 8765;
-
-	private MulticastLock mCastLock;
 	private static NanoHTTPDSender server;
 	private String mFormatedIpAddress;
+
+	NsdManager mNsdManager;
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -57,7 +55,8 @@ public class HttpServiceSender extends Service {
 
 		} else if (intent.hasExtra(Intent.EXTRA_STREAM)) {
 
-			Uri streamUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+			Uri streamUri = (Uri) intent
+					.getParcelableExtra(Intent.EXTRA_STREAM);
 			File file = AndroidUtils.getFile(this, streamUri, false);
 			Log.d(TAG, "Stream loaded : " + file.getPath());
 
@@ -65,17 +64,19 @@ public class HttpServiceSender extends Service {
 				if (server != null) {
 					server.stop();
 				}
-				server = new NanoHTTPDSender(PORT, null, this);
+				server = new NanoHTTPDSender(0, null, this);
 				server.setFormatedIpAddress(mFormatedIpAddress);
 
-				URL ext = new URL(new URL(server.getLocalhost()), server.addFile(Uri.fromFile(file)));
+				URL ext = new URL(new URL(server.getLocalhost()),
+						server.addFile(Uri.fromFile(file)));
 				Log.d(TAG, "External URL : " + ext.toExternalForm());
 
 				String mimetype = null;
 				String extension = "*";
 				if (file.getName().contains(".")) {
 					extension = AndroidUtils.extension(file.getName());
-					mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+					mimetype = MimeTypeMap.getSingleton()
+							.getMimeTypeFromExtension(extension);
 				}
 				if (mimetype == null) {
 					if (type.startsWith("*/")) {
@@ -87,7 +88,9 @@ public class HttpServiceSender extends Service {
 
 				// launch device discover
 				BroadcastTask task = new BroadcastTask();
-				task.execute(BroadcastTask.SEND_OBJECT, ext.toExternalForm(), mimetype != null ? mimetype : type, extension != null ? extension : null);
+				task.execute(BroadcastTask.SEND_OBJECT, ext.toExternalForm(),
+						mimetype != null ? mimetype : type,
+						extension != null ? extension : null);
 			} catch (MalformedURLException e) {
 				Log.d(TAG, Log.getStackTraceString(e));
 			} catch (IOException e) {
@@ -95,9 +98,6 @@ public class HttpServiceSender extends Service {
 			}
 
 		}
-
-		mCastLock = ((WifiManager) getSystemService(WIFI_SERVICE)).createMulticastLock("SSDP");
-		mCastLock.acquire();
 
 		return super.onStartCommand(intent, flags, startId);
 	}
@@ -107,7 +107,8 @@ public class HttpServiceSender extends Service {
 
 		Log.d(TAG, "HttpService Created");
 
-		mFormatedIpAddress = "http://" + AndroidUtils.getIPAddress(true) + ":" + PORT + "/";
+		mFormatedIpAddress = "http://" + AndroidUtils.getIPAddress(true)
+				+ ":XX/";
 
 		Log.d(TAG, "HttpService Started On " + mFormatedIpAddress);
 	}
@@ -116,8 +117,6 @@ public class HttpServiceSender extends Service {
 
 		if (server != null)
 			server.stop();
-		if (mCastLock != null)
-			mCastLock.release();
 
 		Log.d(TAG, "HttpService Stopped");
 	}

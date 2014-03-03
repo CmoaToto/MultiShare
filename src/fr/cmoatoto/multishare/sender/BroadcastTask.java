@@ -2,7 +2,6 @@ package fr.cmoatoto.multishare.sender;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.ray.upnp.ssdp.SSDPSocket;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -48,7 +47,7 @@ public class BroadcastTask extends AsyncTask<String, Object, Object> {
 		} catch (JSONException e) {
 			Log.d(TAG, Log.getStackTraceString(e));
 		}
-		SSDPSocket.send(jsonPostObject);
+//		SSDPSocket.send(jsonPostObject);
 		return null;
 	}
 
