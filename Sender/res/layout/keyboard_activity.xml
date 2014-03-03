@@ -1,0 +1,95 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/keyboard_button1_1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="Home" />
+
+        <Button
+            android:id="@+id/keyboard_button1_2"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="Up" />
+
+        <Button
+            android:id="@+id/keyboard_button1_3"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Back" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/keyboard_button2_1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="Left" />
+
+        <Button
+            android:id="@+id/keyboard_button2_2"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="OK" />
+
+        <Button
+            android:id="@+id/keyboard_button2_3"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Right" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/keyboard_button3_1"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="Vol -" />
+
+        <Button
+            android:id="@+id/keyboard_button3_2"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="Down" />
+
+        <Button
+            android:id="@+id/keyboard_button3_3"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Vol +" />
+    </LinearLayout>
+
+</LinearLayout>
