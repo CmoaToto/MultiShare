@@ -65,7 +65,7 @@ public class KeyboardActivity extends Activity implements OnClickListener {
 	}
 
 	private void sendKeyEvent(int keyEventCode) {
-		new BroadcastTask().execute(BroadcastTask.SEND_KEYBOARD_KEY, String.valueOf(keyEventCode));
+		//new BroadcastTask().execute(BroadcastTask.SEND_KEYBOARD_KEY, String.valueOf(keyEventCode));
 	}
 
 }

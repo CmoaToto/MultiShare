@@ -2,14 +2,9 @@ package fr.cmoatoto.multishare.sender;
 
 import java.util.Set;
 
-import android.net.nsd.NsdManager;
-import android.net.nsd.NsdManager.DiscoveryListener;
-import android.net.nsd.NsdManager.ResolveListener;
-import android.net.nsd.NsdServiceInfo;
-import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -19,7 +14,6 @@ import android.view.View;
 public class ShareActivity extends Activity {
 
 	private static String TAG = ShareActivity.class.getName();
-	private NsdManager mNsdManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,58 +23,6 @@ public class ShareActivity extends Activity {
 		setContentView(new View(this));
 		getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-		mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
-		mNsdManager.discoverServices("_http._tcp.", NsdManager.PROTOCOL_DNS_SD, new DiscoveryListener() {
-
-			@Override
-			public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-				Log.e(TAG, "onStopDiscoveryFailed");
-			}
-
-			@Override
-			public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-				Log.e(TAG, "onStartDiscoveryFailed");
-			}
-
-			@Override
-			public void onServiceLost(NsdServiceInfo serviceInfo) {
-				Log.e(TAG, "onServiceLost");
-			}
-
-			@Override
-			public void onServiceFound(NsdServiceInfo serviceInfo) {
-				Log.w(TAG, "onServiceFound " + serviceInfo.getServiceName() + " / " + serviceInfo.getHost() + " / " + serviceInfo.getPort());
-				if ("MultiShare".equals(serviceInfo.getServiceName())) {
-					mNsdManager.resolveService(serviceInfo, new ResolveListener() {
-
-						@Override
-						public void onServiceResolved(NsdServiceInfo serviceInfo) {
-							Log.w(TAG, "SERVICE AT " + serviceInfo.getHost() + " / " + serviceInfo.getPort());
-							sendData();
-						}
-
-						@Override
-						public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-							// TODO Auto-generated method stub
-
-						}
-					});
-				}
-			}
-
-			@Override
-			public void onDiscoveryStopped(String serviceType) {
-				Log.d(TAG, "onDiscoveryStopped");
-			}
-
-			@Override
-			public void onDiscoveryStarted(String serviceType) {
-				Log.d(TAG, "onDiscoveryStarted");
-			}
-		});
-	}
-
-	private void sendData() {
 		Log.d(TAG, "ShareActivity called");
 
 		// Intent
