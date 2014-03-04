@@ -1,11 +1,16 @@
 package fr.cmoatoto.multishare.sender;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.content.Context;
 import android.net.nsd.NsdManager;
+import android.net.nsd.NsdManager.ResolveListener;
 import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
-public class DiscoverHelper implements NsdManager.DiscoveryListener, NsdManager.ResolveListener {
+public class DiscoverHelper implements NsdManager.DiscoveryListener {
 	public static final String TAG = "DiscoverAndSend";
 
 	private Context mContext;
@@ -38,9 +43,31 @@ public class DiscoverHelper implements NsdManager.DiscoveryListener, NsdManager.
 
 	@Override
 	public void onServiceFound(NsdServiceInfo serviceInfo) {
-		Log.w(TAG, "onServiceFound " + serviceInfo.getServiceName() + " / " + serviceInfo.getHost() + " / " + serviceInfo.getPort());
-		if ("MultiShare".equals(serviceInfo.getServiceName())) {
-			mNsdManager.resolveService(serviceInfo, this);
+		Log.w(TAG, "onServiceFound " + serviceInfo.getServiceName());
+		if (serviceInfo.getServiceName().startsWith("MultiShare")) {
+			mNsdManager.resolveService(serviceInfo, new ResolveListener() {
+
+				@Override
+				public void onServiceResolved(NsdServiceInfo serviceInfo) {
+					Log.w(TAG, "SERVICE AT " + serviceInfo.getHost() + " / " + serviceInfo.getPort());
+					if (serviceInfo.getHost() == null) {
+						return;
+					}
+					HttpClient client = new DefaultHttpClient();
+					HttpGet get = new HttpGet("http:/" + serviceInfo.getHost() + ":" + serviceInfo.getPort() + "/test");
+					try {
+						client.execute(get);
+						mListener.onHostFound("http:/" + serviceInfo.getHost() + ":" + serviceInfo.getPort());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+				@Override
+				public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+					Log.e(TAG, "onResolveFailed");
+				}
+			});
 		}
 	}
 
@@ -52,23 +79,6 @@ public class DiscoverHelper implements NsdManager.DiscoveryListener, NsdManager.
 	@Override
 	public void onDiscoveryStarted(String serviceType) {
 		Log.d(TAG, "onDiscoveryStarted");
-	}
-
-	@Override
-	public void onServiceResolved(NsdServiceInfo serviceInfo) {
-		Log.w(TAG, "SERVICE AT " + serviceInfo.getHost() + " / " + serviceInfo.getPort());
-		if (serviceInfo.getHost() == null) {
-			return;
-		}
-		if ("MultiShare".equals(serviceInfo.getServiceName())) {
-			mListener.onHostFound("http:/" + serviceInfo.getHost() + ":" + serviceInfo.getPort());
-		}
-	}
-
-	@Override
-	public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public interface CandidateHostFoundListener {

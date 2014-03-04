@@ -21,7 +21,7 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 
-public class HttpServiceReceiver extends Service {
+public class HttpServiceReceiver extends Service implements RegistrationListener {
 
 	private static HttpServiceReceiver httpService = null;
 
@@ -60,38 +60,36 @@ public class HttpServiceReceiver extends Service {
 		nsi.setServiceName("MultiShare");
 		nsi.setServiceType("_http._tcp.");
 		mNsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
-		mNsdManager.registerService(nsi, NsdManager.PROTOCOL_DNS_SD, new RegistrationListener() {
-
-			@Override
-			public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
-				Log.e(TAG, "onUnregistrationFailed");
-			}
-
-			@Override
-			public void onServiceUnregistered(NsdServiceInfo serviceInfo) {
-				Log.d(TAG, "onServiceUnregistered");
-			}
-
-			@Override
-			public void onServiceRegistered(NsdServiceInfo serviceInfo) {
-				Log.d(TAG, "onServiceRegistered");
-			}
-
-			@Override
-			public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
-				Log.e(TAG, "onRegistrationFailed");
-			}
-		});
+		mNsdManager.registerService(nsi, NsdManager.PROTOCOL_DNS_SD, this);
 	}
 
 	@Override
 	public void onDestroy() {
-
+		mNsdManager.unregisterService(this);
 		httpService = null;
 
 		Log.d("HttpService", "My Service Stopped");
-
 		startHttpServiceIfNeeded(this);
+	}
+
+	@Override
+	public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+		Log.e(TAG, "onUnregistrationFailed");
+	}
+
+	@Override
+	public void onServiceUnregistered(NsdServiceInfo serviceInfo) {
+		Log.d(TAG, "onServiceUnregistered");
+	}
+
+	@Override
+	public void onServiceRegistered(NsdServiceInfo serviceInfo) {
+		Log.d(TAG, "onServiceRegistered");
+	}
+
+	@Override
+	public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+		Log.e(TAG, "onRegistrationFailed");
 	}
 
 	public static void show(final Context c, String value, final String mime, final String extension) {
