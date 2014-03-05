@@ -30,6 +30,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.webkit.MimeTypeMap;
 import fr.cmoatoto.multishare.sender.DiscoverHelper.CandidateHostFoundListener;
 import fr.cmoatoto.multishare.utils.AndroidUtils;
@@ -41,6 +42,9 @@ public class HttpServiceSender extends Service {
 	public static String TYPE_KEY = TAG + ".typeKey";
 
 	private static NanoHTTPDSender server;
+
+	private HttpServiceSender mHttpService = this;
+
 	private String mFormatedIpAddress;
 
 	NsdManager mNsdManager;
@@ -114,7 +118,25 @@ public class HttpServiceSender extends Service {
 			return super.onStartCommand(intent, flags, startId);
 		}
 
-		if (intent.hasExtra(Intent.EXTRA_TEXT)) {
+		if (type.startsWith("keyboard/key")) {
+
+			Message msg = mServiceHandler.obtainMessage();
+			int key = intent.getIntExtra(KeyboardActivity.KEYBOARD_KEY, -1);
+
+			if (key != -1) {
+				Log.d(TAG, "KeyEvent loaded : " + KeyEvent.keyCodeToString(key));
+				JSONObject jsonPostObject = new JSONObject();
+				try {
+					jsonPostObject.put("value", key);
+					jsonPostObject.put("mime", "keyboard/key");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				msg.obj = jsonPostObject;
+				mServiceHandler.sendMessage(msg);
+			}
+
+		} else if (intent.hasExtra(Intent.EXTRA_TEXT)) {
 
 			Message msg = mServiceHandler.obtainMessage();
 			String txt = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -147,7 +169,11 @@ public class HttpServiceSender extends Service {
 				server = new NanoHTTPDSender(0, null, this);
 
 				Message msg = mServiceHandler.obtainMessage();
-				URL ext = new URL(new URL(server.getLocalhost()), server.addFile(Uri.fromFile(file)));
+				Uri uri = Uri.fromFile(file);
+				Log.d(TAG, "File Uri : " + uri);
+				String filePath = server.addFile(mHttpService, uri);
+				Log.d(TAG, "Server File path : " + filePath);
+				URL ext = new URL(new URL(server.getLocalhost()), filePath);
 				Log.d(TAG, "External URL : " + ext.toExternalForm());
 
 				String mimetype = null;

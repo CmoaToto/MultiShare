@@ -1,7 +1,11 @@
 package fr.cmoatoto.multishare.sender;
 
+import java.util.Set;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,6 +13,8 @@ import android.view.View.OnClickListener;
 public class KeyboardActivity extends Activity implements OnClickListener {
 
 	private static final String TAG = KeyboardActivity.class.getName();
+
+	public static final String KEYBOARD_KEY = TAG + ".KeyboardKey";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +71,12 @@ public class KeyboardActivity extends Activity implements OnClickListener {
 	}
 
 	private void sendKeyEvent(int keyEventCode) {
-		//new BroadcastTask().execute(BroadcastTask.SEND_KEYBOARD_KEY, String.valueOf(keyEventCode));
+		// new BroadcastTask().execute(BroadcastTask.SEND_KEYBOARD_KEY, String.valueOf(keyEventCode));
+
+		Intent sendServiceIntent = new Intent(this, HttpServiceSender.class);
+		sendServiceIntent.putExtra(HttpServiceSender.TYPE_KEY, "keyboard/key");
+		sendServiceIntent.putExtra(KEYBOARD_KEY, keyEventCode);
+		startService(sendServiceIntent);
 	}
 
 }

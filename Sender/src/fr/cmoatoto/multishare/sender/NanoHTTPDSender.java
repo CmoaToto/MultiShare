@@ -256,10 +256,10 @@ public class NanoHTTPDSender {
 		public Properties header = new Properties();
 	}
 
-	public String addFile(Uri imageUri) {
-		String hashPath = "" + imageUri.getPath().hashCode();
-		mCorrespondances.put("/" + hashPath, imageUri);
-		return hashPath;
+	public String addFile(Context c, Uri uri) {
+		String path = AndroidUtils.getFilename(c, uri);
+		mCorrespondances.put("/" + path, uri);
+		return path;
 	}
 
 	/**

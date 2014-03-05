@@ -139,9 +139,13 @@ public class NanoHTTPDReceiver {
 		while (e.hasMoreElements()) {
 			element = (String) e.nextElement();
 
-			myOut.println("  PRM: '" + value + "' = '" + parms.getProperty(element) + "'");
+			myOut.println("  PRM: '" + element + "' = '" + parms.getProperty(element) + "'");
 			if (element.equals("value")) {
 				value = parms.getProperty(element);
+				if (value.contains("http://remote_host:")) {
+					value = value.replace("/remote_host", inetAddress.toString());
+					myOut.println("  PRM REPLACED BY: '" + element + "' = '" + value + "'");
+				}
 			} else if (element.equals("mime")) {
 				mimeType = parms.getProperty(element);
 			} else if (element.equals("extension")) {
@@ -778,6 +782,8 @@ public class NanoHTTPDReceiver {
 			// p.put( decodePercent( e ).trim(), "" );
 			// }
 			try {
+				parms = Uri.decode(parms);
+				parms = parms.substring("intent=".length());
 				JSONObject jsonObj = new JSONObject(parms);
 				JSONArray keys = jsonObj.names();
 				for (int i = 0; i < keys.length(); i++) {

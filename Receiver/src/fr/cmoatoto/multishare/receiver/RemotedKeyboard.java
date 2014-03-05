@@ -3,10 +3,13 @@ package fr.cmoatoto.multishare.receiver;
 import android.content.Context;
 import android.content.Intent;
 import android.inputmethodservice.InputMethodService;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
 public class RemotedKeyboard extends InputMethodService {
+	
+	private static final String TAG = RemotedKeyboard.class.getName();
 
 	private static RemotedKeyboard keyboard = null;
 	private static KeyboardCreatedListener keyboardCreatedListener = null;
@@ -61,6 +64,7 @@ public class RemotedKeyboard extends InputMethodService {
 	}
 
 	public static void sendKeyEvent(Context c, final int keyEventCode) {
+		Log.d(TAG, "Received KeyCode " + KeyEvent.keyCodeToString(keyEventCode));
 		if (keyEventCode == KeyEvent.KEYCODE_HOME) {
 			// An App can't send KEYCODE_HOME...
 			Intent i = new Intent();
